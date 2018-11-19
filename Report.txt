@@ -1,0 +1,9 @@
+Report:
+
+Training with CNN:
+
+- Changed weight_decay
+
+- Changed size of max_pooling 
+
+- Added layers:

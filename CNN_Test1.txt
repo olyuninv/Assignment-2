@@ -1,0 +1,49 @@
+CNN_Test1:
+
+Model:
+
+class CNN(nn.Module):
+    def __init__(self):
+        super(CNN, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=16, 
+                               kernel_size=5, stride=1, padding=0)
+        #self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, 
+        #                       kernel_size=4, stride=1, padding=0)
+        self.fc1 = nn.Linear(in_features=576, out_features=128)
+        self.fc2 = nn.Linear(in_features=128, out_features=10)
+
+        nn.init.kaiming_normal_(self.conv1.weight)
+        #nn.init.kaiming_normal_(self.conv2.weight)
+        nn.init.kaiming_normal_(self.fc1.weight)
+        nn.init.kaiming_normal_(self.fc2.weight)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = F.max_pool2d(x, kernel_size=4)
+        #x = self.conv2(x)
+        #x = F.max_pool2d(x, kernel_size=2)
+        x = F.relu(x)
+        x = x.view(-1, 576)
+        x = self.fc1(x)
+        x = F.relu(x)
+        x = self.fc2(x)
+        return F.log_softmax(x, dim=1)
+		
+Data:
+
+train_data = datasets.FashionMNIST('../dataFashion', train=True, download=True,
+                   transform=transforms.Compose([
+                       transforms.ToTensor(),
+                       transforms.Normalize((0.1307,), (0.3081,))
+                   ]))
+test_data = datasets.FashionMNIST('../dataFashion', train=False, 
+                   transform=transforms.Compose([
+                       transforms.ToTensor(),
+                       transforms.Normalize((0.1307,), (0.3081,))
+                   ]))
+				   
+Optimizer:
+optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum, weight_decay = 0.001)
+
+Result:
+Av.Loss = 0.3008, Accuracy - 89.28%
